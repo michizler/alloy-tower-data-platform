@@ -1,0 +1,23 @@
+artifact_path: file:c:/Users/brigh/Documents/amdari-internship/projects/alloy-tower-data-platform/model/mlruns/1/models/m-13e8af0b3d2a4ea8a42539c9f2c09afc/artifacts
+flavors:
+  lightgbm:
+    code: null
+    data: model.lgb
+    lgb_version: 4.6.0
+    model_class: lightgbm.basic.Booster
+    serialization_format: cloudpickle
+    skops_trusted_types: null
+  python_function:
+    data: model.lgb
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.lightgbm
+    python_version: 3.14.3
+mlflow_version: 3.11.1
+model_id: m-13e8af0b3d2a4ea8a42539c9f2c09afc
+model_size_bytes: 784616
+model_uuid: m-13e8af0b3d2a4ea8a42539c9f2c09afc
+prompts: null
+run_id: 6ab4de3c50314fb8b5b4efcb7c3902f2
+utc_time_created: '2026-04-26 11:02:03.294904'
