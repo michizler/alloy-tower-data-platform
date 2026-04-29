@@ -1,0 +1,23 @@
+artifact_path: file:C:/Users/brigh/Documents/amdari-internship/projects/alloy-tower-data-platform/mlruns/2/models/m-7aba8d73bda64afbad7b45e52604e475/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.14.3
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+    skops_trusted_types: null
+mlflow_version: 3.11.1
+model_id: m-7aba8d73bda64afbad7b45e52604e475
+model_size_bytes: 842
+model_uuid: m-7aba8d73bda64afbad7b45e52604e475
+prompts: null
+run_id: 8ae580b231c14a4bb88e8b01ea58e73a
+utc_time_created: '2026-04-26 12:26:07.965222'
