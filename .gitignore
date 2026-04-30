@@ -1,3 +1,8 @@
 venv
 model/mlflow.db
 mlflow.db
+api/__pycache__/
+model/__pycache__/
+app/__pycache__/
+model/models/__pycache__/
+pycache__/
