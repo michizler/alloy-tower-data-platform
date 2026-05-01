@@ -49,7 +49,6 @@ three-page Streamlit app that renders results in a stakeholder-friendly way.
 ## Setup
 
 ```bash
-cd avm_app
 python -m venv venv
 source venv/bin/activate          # on Windows: venv\Scripts\activate
 pip install -r requirements.txt
