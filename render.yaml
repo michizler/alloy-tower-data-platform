@@ -14,8 +14,8 @@ services:
     name: alloytower-avm-api
     runtime: docker
     plan: free
-    region: oregon            # change if a closer region matters
-    branch: main              # change if your default branch is different
+    region: oregon            # anyone that is closer to most traffic
+    branch: master             # deploy on pushes to this branch
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health  # Render uses this to detect a healthy boot
     autoDeploy: true          # redeploy on every push to the configured branch
