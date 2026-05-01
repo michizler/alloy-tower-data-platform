@@ -1,0 +1,21 @@
+# Render service configuration for the AlloyTower AVM API.
+#
+# When connected to GitHub, Render reads this file on every push to the main
+# branch and redeploys automatically.
+#
+# Free tier notes:
+#   - 512 MB RAM (sufficient for LightGBM + SHAP on this dataset size)
+#   - Cold-start delay of ~30s after 15 min of inactivity
+#   - HTTPS terminated automatically; service available at
+#     https://<service-name>.onrender.com
+
+services:
+  - type: web
+    name: alloytower-avm-api
+    runtime: docker
+    plan: free
+    region: oregon            # change if a closer region matters
+    branch: main              # change if your default branch is different
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health  # Render uses this to detect a healthy boot
+    autoDeploy: true          # redeploy on every push to the configured branch

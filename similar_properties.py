@@ -55,7 +55,6 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
-
 # ============================================================================
 # Configuration
 # ============================================================================
@@ -94,9 +93,11 @@ CATEGORICAL_PENALTIES = {
 # Data class
 # ============================================================================
 
+
 @dataclass
 class SimilarMatch:
     """A single property match with its similarity score."""
+
     property_id: str
     city: str
     state: str
@@ -126,12 +127,15 @@ class SimilarMatch:
 # Finder class
 # ============================================================================
 
+
 class SimilarPropertiesFinder:
     """Index property attributes and return the most similar properties to a query."""
 
     def __init__(self, df: pd.DataFrame):
         # Defensive: make sure required columns exist
-        required = set(NUMERIC_FEATURES + CATEGORICAL_FEATURES + ["property_id", "last_sale_price"])
+        required = set(
+            NUMERIC_FEATURES + CATEGORICAL_FEATURES + ["property_id", "last_sale_price"]
+        )
         missing = required - set(df.columns)
         if missing:
             raise ValueError(f"DataFrame is missing required columns: {missing}")
@@ -187,7 +191,9 @@ class SimilarPropertiesFinder:
         """
         # ---- Build query vectors ----
         # Numeric: scale and weight the same way as the index
-        q_numeric_raw = np.array([[query.get(f, self.df[f].mean()) for f in NUMERIC_FEATURES]])
+        q_numeric_raw = np.array(
+            [[query.get(f, self.df[f].mean()) for f in NUMERIC_FEATURES]]
+        )
         q_numeric = self.scaler.transform(q_numeric_raw)
         weights = np.array([NUMERIC_WEIGHTS[f] for f in NUMERIC_FEATURES])
         q_numeric = q_numeric * weights
@@ -208,7 +214,9 @@ class SimilarPropertiesFinder:
         if target_price is not None:
             lo = target_price * (1 - price_tolerance)
             hi = target_price * (1 + price_tolerance)
-            in_band = (self.df["last_sale_price"] >= lo) & (self.df["last_sale_price"] <= hi)
+            in_band = (self.df["last_sale_price"] >= lo) & (
+                self.df["last_sale_price"] <= hi
+            )
             total_dist = np.where(in_band, total_dist, np.inf)
 
         # ---- Exclude the query property if searching by ID ----
@@ -223,24 +231,27 @@ class SimilarPropertiesFinder:
             if not np.isfinite(total_dist[idx]):
                 continue  # exhausted matches (e.g., price band too tight)
             row = self.df.iloc[idx]
-            results.append(SimilarMatch(
-                property_id=str(row["property_id"]),
-                city=str(row["city"]),
-                state=str(row["state"]),
-                property_type=str(row["property_type"]),
-                sqft=int(row["sqft"]),
-                bedrooms=int(row["bedrooms"]),
-                bathrooms=float(row["bathrooms"]),
-                year_built=int(row["year_built"]),
-                last_sale_price=float(row["last_sale_price"]),
-                distance=float(total_dist[idx]),
-            ))
+            results.append(
+                SimilarMatch(
+                    property_id=str(row["property_id"]),
+                    city=str(row["city"]),
+                    state=str(row["state"]),
+                    property_type=str(row["property_type"]),
+                    sqft=int(row["sqft"]),
+                    bedrooms=int(row["bedrooms"]),
+                    bathrooms=float(row["bathrooms"]),
+                    year_built=int(row["year_built"]),
+                    last_sale_price=float(row["last_sale_price"]),
+                    distance=float(total_dist[idx]),
+                )
+            )
         return results
 
 
 # ============================================================================
 # Demonstration script
 # ============================================================================
+
 
 def _demo() -> None:
     """Quick demo when run as a script. Expects artifacts/alloy_clean.csv."""
@@ -263,23 +274,33 @@ def _demo() -> None:
     sample_id = finder.df.iloc[0]["property_id"]
     sample_row = finder.df.iloc[0]
     print(f"--- Demo 1: properties similar to {sample_id} ---")
-    print(f"Query: {sample_row['city']}, {sample_row['state']} | {sample_row['property_type']} | "
-          f"{sample_row['sqft']} sqft | {sample_row['bedrooms']}bd/{sample_row['bathrooms']}ba | "
-          f"${sample_row['last_sale_price']:,.0f}\n")
+    print(
+        f"Query: {sample_row['city']}, {sample_row['state']} | {sample_row['property_type']} | "
+        f"{sample_row['sqft']} sqft | {sample_row['bedrooms']}bd/{sample_row['bathrooms']}ba | "
+        f"${sample_row['last_sale_price']:,.0f}\n"
+    )
 
     matches = finder.find_similar_by_id(sample_id, n=5)
     for i, m in enumerate(matches, 1):
         d = m.to_dict()
-        print(f"  {i}. {d['property_id']} | {d['location']} | {d['property_type']} | "
-              f"{d['sqft']} sqft | {d['bedrooms']}bd/{d['bathrooms']}ba | "
-              f"{d['last_sale_price']} | similarity={d['similarity_score']}")
+        print(
+            f"  {i}. {d['property_id']} | {d['location']} | {d['property_type']} | "
+            f"{d['sqft']} sqft | {d['bedrooms']}bd/{d['bathrooms']}ba | "
+            f"{d['last_sale_price']} | similarity={d['similarity_score']}"
+        )
 
     # Demo 2: find similar to a custom query, with price band
     print("\n--- Demo 2: custom query + price band ---")
     query = {
-        "state": "CA", "city": "San Francisco", "property_type": "Condo",
-        "sqft": 1200, "bedrooms": 2, "bathrooms": 2.0, "year_built": 2010,
-        "lot_size_sqft": 0, "owner_occupied": True,
+        "state": "CA",
+        "city": "San Francisco",
+        "property_type": "Condo",
+        "sqft": 1200,
+        "bedrooms": 2,
+        "bathrooms": 2.0,
+        "year_built": 2010,
+        "lot_size_sqft": 0,
+        "owner_occupied": True,
     }
     print(f"Query: CA Condo, 1200 sqft, 2bd/2ba, target ~$1.5M ± 20%\n")
     matches = finder.find_similar_by_attrs(
@@ -290,9 +311,11 @@ def _demo() -> None:
     else:
         for i, m in enumerate(matches, 1):
             d = m.to_dict()
-            print(f"  {i}. {d['property_id']} | {d['location']} | {d['property_type']} | "
-                  f"{d['sqft']} sqft | {d['bedrooms']}bd/{d['bathrooms']}ba | "
-                  f"{d['last_sale_price']} | similarity={d['similarity_score']}")
+            print(
+                f"  {i}. {d['property_id']} | {d['location']} | {d['property_type']} | "
+                f"{d['sqft']} sqft | {d['bedrooms']}bd/{d['bathrooms']}ba | "
+                f"{d['last_sale_price']} | similarity={d['similarity_score']}"
+            )
 
 
 if __name__ == "__main__":

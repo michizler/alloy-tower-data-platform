@@ -12,17 +12,15 @@ import streamlit as st
 
 from app.lib import Colors, page_header, get_metadata, get_health, ApiError
 
-
 # ============================================================================
 # Page setup
 # ============================================================================
 
-st.set_page_config(page_title="About | AlloyTower AVM",
-                   page_icon="ℹ️", layout="wide")
+st.set_page_config(page_title="About | AlloyTower AVM", page_icon="ℹ️", layout="wide")
 
 page_header(
     "About this model",
-    "How the AlloyTower AVM works, what it can do, and what it can't."
+    "How the AlloyTower AVM works, what it can do, and what it can't.",
 )
 
 
@@ -36,7 +34,9 @@ try:
 except ApiError as e:
     api_ok = False
     meta = {}
-    st.warning(f"Could not load live model metadata: {e.message}. Showing static information only.")
+    st.warning(
+        f"Could not load live model metadata: {e.message}. Showing static information only."
+    )
 
 
 # ============================================================================
@@ -69,21 +69,21 @@ with col1:
             f'<div style="border: 1px solid {Colors.border}; border-radius: 8px; '
             f'padding: 16px 20px; height: 100%;">'
             f'<div style="font-size: 11px; color: {Colors.success}; '
-            f'background: {Colors.success_bg}; padding: 2px 8px; border-radius: 10px; '
+            f"background: {Colors.success_bg}; padding: 2px 8px; border-radius: 10px; "
             f'display: inline-block; margin-bottom: 8px; font-weight: 600;">'
-            f'MODEL A — RECOMMENDED'
-            f'</div>'
+            f"MODEL A — RECOMMENDED"
+            f"</div>"
             f'<h4 style="margin: 4px 0 8px;">{a["label"]}</h4>'
             f'<p style="font-size: 14px; color: {Colors.neutral}; margin: 0 0 12px;">'
             f'<b>When used:</b> {a["use_when"]}'
-            f'</p>'
+            f"</p>"
             f'<div style="font-size: 28px; font-weight: 600; color: {Colors.primary};">'
             f'±{a["mape"]:.1f}%'
-            f'</div>'
+            f"</div>"
             f'<div style="font-size: 12px; color: {Colors.neutral}; margin-top: 4px;">'
             f'typical prediction accuracy ({a["n_features"]} input features)'
-            f'</div>'
-            f'</div>',
+            f"</div>"
+            f"</div>",
             unsafe_allow_html=True,
         )
 
@@ -94,21 +94,21 @@ with col2:
             f'<div style="border: 1px solid {Colors.border}; border-radius: 8px; '
             f'padding: 16px 20px; height: 100%;">'
             f'<div style="font-size: 11px; color: {Colors.warning}; '
-            f'background: {Colors.warning_bg}; padding: 2px 8px; border-radius: 10px; '
+            f"background: {Colors.warning_bg}; padding: 2px 8px; border-radius: 10px; "
             f'display: inline-block; margin-bottom: 8px; font-weight: 600;">'
-            f'MODEL B — FALLBACK'
-            f'</div>'
+            f"MODEL B — FALLBACK"
+            f"</div>"
             f'<h4 style="margin: 4px 0 8px;">{b["label"]}</h4>'
             f'<p style="font-size: 14px; color: {Colors.neutral}; margin: 0 0 12px;">'
             f'<b>When used:</b> {b["use_when"]}'
-            f'</p>'
+            f"</p>"
             f'<div style="font-size: 28px; font-weight: 600; color: {Colors.primary};">'
             f'±{b["mape"]:.1f}%'
-            f'</div>'
+            f"</div>"
             f'<div style="font-size: 12px; color: {Colors.neutral}; margin-top: 4px;">'
             f'typical prediction accuracy ({b["n_features"]} input features)'
-            f'</div>'
-            f'</div>',
+            f"</div>"
+            f"</div>",
             unsafe_allow_html=True,
         )
 
@@ -119,7 +119,7 @@ st.markdown("")
 # Section 2: What "MAPE" means
 # ============================================================================
 
-st.markdown("#### What does \"±8% accuracy\" actually mean?")
+st.markdown('#### What does "±8% accuracy" actually mean?')
 
 st.markdown(f"""
 The number above each model is its **Mean Absolute Percentage Error (MAPE)** —

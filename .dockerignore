@@ -1,0 +1,55 @@
+# Don't ship dev-only stuff to Render.
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local development artifacts
+.streamlit/
+mlruns/
+mlflow.db
+mlartifacts/
+
+# Project files not needed by the API
+eda/
+project_brief/
+*.ipynb
+*.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Large CSVs we don't need at runtime (model_A.pkl is enough; the raw / cleaned
+# CSVs are only needed by the Market Explorer page, which Streamlit hosts.
+# The API serves /comparables from alloy_clean.csv, so we DO keep that one.)
+alloy_for_powerbi.csv
+alloy_for_powerbi.xlsx
+alloy_data_cleaned.csv
+source_data/
+
+# Streamlit-only files don't belong on the API server
+app/
+run_app.py
+pages/

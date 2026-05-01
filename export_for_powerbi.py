@@ -32,7 +32,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-
 # ============================================================================
 # Configuration
 # ============================================================================
@@ -49,13 +48,17 @@ ASSESSMENT_BAND_HIGH = 1.10
 # Logging
 # ============================================================================
 
+
 def setup_logging() -> logging.Logger:
     logger = logging.getLogger("powerbi_export")
     logger.setLevel(logging.INFO)
     if not logger.handlers:
         handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(logging.Formatter("[%(asctime)s] %(levelname)s | %(message)s",
-                                               datefmt="%H:%M:%S"))
+        handler.setFormatter(
+            logging.Formatter(
+                "[%(asctime)s] %(levelname)s | %(message)s", datefmt="%H:%M:%S"
+            )
+        )
         logger.addHandler(handler)
     return logger
 
@@ -66,6 +69,7 @@ log = setup_logging()
 # ============================================================================
 # Data loading
 # ============================================================================
+
 
 def load_raw(path: Path) -> pd.DataFrame:
     """Load raw alloy_data.csv — semicolon-delimited, UTF-8 with BOM."""
@@ -92,6 +96,7 @@ def load_raw(path: Path) -> pd.DataFrame:
 # Field construction
 # ============================================================================
 
+
 def build_group_median(df: pd.DataFrame) -> pd.DataFrame:
     """Add median_price_per_sqft_group: median of price_per_sqft within each
     state × property_type combination.
@@ -101,11 +106,15 @@ def build_group_median(df: pd.DataFrame) -> pd.DataFrame:
     """
     df = df.copy()
     if "price_per_sqft" not in df.columns:
-        log.warning("price_per_sqft not in source data — deriving from "
-                    "last_sale_price / sqft")
+        log.warning(
+            "price_per_sqft not in source data — deriving from "
+            "last_sale_price / sqft"
+        )
         df["price_per_sqft"] = (df["last_sale_price"] / df["sqft"]).round(2)
 
-    group_medians = df.groupby(["state", "property_type"])["price_per_sqft"].transform("median")
+    group_medians = df.groupby(["state", "property_type"])["price_per_sqft"].transform(
+        "median"
+    )
     df["median_price_per_sqft_group"] = group_medians.round(2)
     return df
 
@@ -138,6 +147,7 @@ def build_assessment_flag(df: pd.DataFrame) -> pd.DataFrame:
 # Pipeline orchestration
 # ============================================================================
 
+
 def run_export(input_path: Path, output_path: Path) -> None:
     df = load_raw(input_path)
 
@@ -166,8 +176,10 @@ def run_export(input_path: Path, output_path: Path) -> None:
     log.info(f"\nGroup median price/sqft (state × type):")
     n_groups = df.groupby(["state", "property_type"]).ngroups
     log.info(f"  Distinct groups:  {n_groups}")
-    log.info(f"  Range:            ${df['median_price_per_sqft_group'].min():,.2f} – "
-             f"${df['median_price_per_sqft_group'].max():,.2f}")
+    log.info(
+        f"  Range:            ${df['median_price_per_sqft_group'].min():,.2f} – "
+        f"${df['median_price_per_sqft_group'].max():,.2f}"
+    )
     log.info(f"  Overall median:   ${df['median_price_per_sqft_group'].median():,.2f}")
 
     log.info("")
@@ -178,15 +190,24 @@ def run_export(input_path: Path, output_path: Path) -> None:
 # CLI
 # ============================================================================
 
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Build the AlloyTower Power BI export from raw source data.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("--input", type=Path, default=Path("source_data/alloy_data.csv"),
-                        help="Path to raw alloy_data.csv input")
-    parser.add_argument("--output", type=Path, default=Path("alloy_for_powerbi.csv"),
-                        help="Path to write the Power BI CSV")
+    parser.add_argument(
+        "--input",
+        type=Path,
+        default=Path("source_data/alloy_data.csv"),
+        help="Path to raw alloy_data.csv input",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("alloy_for_powerbi.csv"),
+        help="Path to write the Power BI CSV",
+    )
     return parser.parse_args()
 
 

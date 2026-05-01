@@ -19,28 +19,30 @@ import numpy as np
 import pandas as pd
 import shap
 
-
 # ============================================================================
 # Data classes
 # ============================================================================
 
+
 @dataclass
 class FeatureContribution:
     """One feature's contribution to a single prediction."""
+
     feature: str
-    display_name: str           # human-readable label
-    value: str                  # the feature's value as the user would see it
-    contribution: float         # signed dollars: + pushed price up, - pushed it down
+    display_name: str  # human-readable label
+    value: str  # the feature's value as the user would see it
+    contribution: float  # signed dollars: + pushed price up, - pushed it down
     direction: Literal["up", "down", "neutral"]
 
 
 @dataclass
 class Prediction:
     """A single property valuation result."""
+
     estimated_value: float
-    lower_bound: float          # estimated_value × (1 - mape)
-    upper_bound: float          # estimated_value × (1 + mape)
-    mape: float                 # CV-based MAPE for this model variant, as fraction (e.g. 0.08)
+    lower_bound: float  # estimated_value × (1 - mape)
+    upper_bound: float  # estimated_value × (1 + mape)
+    mape: float  # CV-based MAPE for this model variant, as fraction (e.g. 0.08)
     model_used: Literal["A", "B"]
     contributions: list[FeatureContribution]
 
@@ -48,6 +50,7 @@ class Prediction:
 # ============================================================================
 # Predictor
 # ============================================================================
+
 
 class AVMPredictor:
     """Wraps Model A and Model B; chooses the right one based on input."""
@@ -84,7 +87,9 @@ class AVMPredictor:
         # MAPE values come from the bundle's CV summary; if not stored, fall back
         # to the figures we observed during training.
         self.mape_a = self._safe_get_cv_metric(self.bundle_a, "MAPE", default=8.5) / 100
-        self.mape_b = self._safe_get_cv_metric(self.bundle_b, "MAPE", default=44.9) / 100
+        self.mape_b = (
+            self._safe_get_cv_metric(self.bundle_b, "MAPE", default=44.9) / 100
+        )
 
     @staticmethod
     def _safe_get_cv_metric(bundle: dict, metric: str, default: float) -> float:
@@ -108,7 +113,9 @@ class AVMPredictor:
 
         # Native categoricals — match training categories
         for col in ["property_type", "owner_occupied"]:
-            df[col] = pd.Categorical(df[col], categories=bundle["train_categories"][col])
+            df[col] = pd.Categorical(
+                df[col], categories=bundle["train_categories"][col]
+            )
 
         # Interactions
         df["sqft_per_bedroom"] = df["sqft"] / df["bedrooms"].replace(0, np.nan)
@@ -130,7 +137,11 @@ class AVMPredictor:
         mape = self.mape_a if use_model_a else self.mape_b
 
         # Drop assessed_value cleanly if Model B is being used
-        raw_for_pipeline = {k: v for k, v in raw.items() if not (not use_model_a and k == "assessed_value")}
+        raw_for_pipeline = {
+            k: v
+            for k, v in raw.items()
+            if not (not use_model_a and k == "assessed_value")
+        }
 
         # Model B doesn't have assessed_value in its feature list, so we need to
         # be sure we don't pass it through. The pipeline subset by feature_cols
@@ -155,14 +166,20 @@ class AVMPredictor:
         for feat, shap_val in zip(bundle["feature_cols"], shap_row):
             display_value = self._format_feature_value(feat, raw_for_pipeline)
             dollar_delta = float(shap_val) * y
-            direction = "up" if dollar_delta > 1000 else "down" if dollar_delta < -1000 else "neutral"
-            contributions.append(FeatureContribution(
-                feature=feat,
-                display_name=self.DISPLAY_NAMES.get(feat, feat),
-                value=display_value,
-                contribution=dollar_delta,
-                direction=direction,
-            ))
+            direction = (
+                "up"
+                if dollar_delta > 1000
+                else "down" if dollar_delta < -1000 else "neutral"
+            )
+            contributions.append(
+                FeatureContribution(
+                    feature=feat,
+                    display_name=self.DISPLAY_NAMES.get(feat, feat),
+                    value=display_value,
+                    contribution=dollar_delta,
+                    direction=direction,
+                )
+            )
         # Sort by absolute contribution, descending
         contributions.sort(key=lambda c: abs(c.contribution), reverse=True)
 
