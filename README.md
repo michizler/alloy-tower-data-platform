@@ -6,6 +6,7 @@ A 3-week internship project covering data validation, automated valuation modell
 
 > **Author:** Bright Uzosike — Data Scientist
 > **Status:** Phase 1 prototype — see [Known limitations](#known-limitations) before drawing business conclusions.
+> **Reflections** Loom Video - see [Reflection Video](https://www.loom.com/share/4158cfcfc12c41a4b3bffc0ce2a10020)
 
 ---
 
