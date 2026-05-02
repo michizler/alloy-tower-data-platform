@@ -291,6 +291,6 @@ Render rebuilds the backend image with the new bundles. Streamlit needs no code 
 
 ## Contact
 
-[Bright Uzosike](mailto:michizler@gmail.com) — Data Scientist · AlloyTower Phase 1
+[Bright Uzosike](mailto:michizler@gmail.com)
 
 For technical questions about the modelling, see the Data Quality Findings Report and the in-code docstrings. For project-level questions, see the Phase 1 Scope document.
