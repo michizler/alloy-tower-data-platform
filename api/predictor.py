@@ -84,19 +84,15 @@ class AVMPredictor:
         self._explainer_a = shap.TreeExplainer(self.bundle_a["model"])
         self._explainer_b = shap.TreeExplainer(self.bundle_b["model"])
 
-        # MAPE values come from the bundle's CV summary; if not stored, fall back
-        # to the figures we observed during training.
-        self.mape_a = self._safe_get_cv_metric(self.bundle_a, "MAPE", default=8.5) / 100
-        self.mape_b = (
-            self._safe_get_cv_metric(self.bundle_b, "MAPE", default=44.9) / 100
-        )
+        # MAPE comes from the bundle's 5-fold CV summary, stored as
+        # cv_summary[metric]["mean"]. No fallback: a missing metric should fail
+        # loudly at startup rather than serve a number the model never scored.
+        self.mape_a = self._get_cv_metric(self.bundle_a, "MAPE") / 100
+        self.mape_b = self._get_cv_metric(self.bundle_b, "MAPE") / 100
 
     @staticmethod
-    def _safe_get_cv_metric(bundle: dict, metric: str, default: float) -> float:
-        try:
-            return float(bundle["cv_summary"]["mean"][metric])
-        except (KeyError, TypeError):
-            return default
+    def _get_cv_metric(bundle: dict, metric: str) -> float:
+        return float(bundle["cv_summary"][metric]["mean"])
 
     # ------------------------------------------------------------------
     # Feature pipeline — must mirror train_avm.py exactly

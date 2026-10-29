@@ -116,7 +116,7 @@ Two model variants are trained, tracked in MLflow, and served by the API. The ri
 
 | Model                     | Use case                                                  | MAPE (5-fold CV) | R²          |
 | ------------------------- | --------------------------------------------------------- | ---------------- | ----------- |
-| **A — Assessment-aware**  | Property has a recent county assessment                   | **8.5% ± 1.0%**  | 0.97 ± 0.01 |
+| **A — Assessment-aware**  | Property has a recent county assessment                   | **8.0% ± 0.3%**  | 0.98 ± 0.00 |
 | **B — Fundamentals-only** | New build, unassessed property, or assessment unavailable | **44.9% ± 2.8%** | 0.55 ± 0.04 |
 
 ### Why the gap
